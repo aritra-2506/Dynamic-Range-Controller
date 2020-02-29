@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+	<meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+<!--<link rel="stylesheet" href="C:\Users\aritra\Desktop\HTML&CSS\font-awesome-4.7.0/css/font-awesome.min.css">-->
+	
+        <title>Dynamic Range Control-Peak Mode</title>
+        <script type="text/javascript" src="js/nexusUI.js" ></script>
+        <script type="text/javascript" src="js/Tone.js" ></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/pizzicato/0.6.3/Pizzicato.js"></script>
+		
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+		
+		
+		<!-- wavesurfer.js -->
+        
+		<script type="text/javascript" src="js/wavesurfer.min.js" ></script>
+        <script type="text/javascript" src="js/wavesurfer.regions.js" ></script>
+			
+		<script src="js/popper.min.js"></script>
+	<script src="jquery-ui/jquery-ui.js"></script>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<link href="jquery-ui/jquery-ui.css" rel="stylesheet">
+	<style>
+	
+
+		#scndDiv {
+		padding-top: 5px;
+		padding-bottom: 10px;
+		position:relative;
+		left:452px;
+		top: 20px;
+		}
+		
+		#upload {
+		padding-top: 5px;
+		padding-bottom: 10px;
+		position:relative;
+		left:426px;
+		top: 20px;
+		}
+		
+		#frm {
+		padding-top: 5px;
+		padding-bottom: 10px;
+		position:relative;
+		left:500px;
+		top: 20px;
+		
+		}
+		
+		
+		h3 {
+		text-align: center;
+		font-weight:bold;
+		margin-top:10px;
+		color:#cc0000;
+		position:relative;
+		top:10px;
+		}
+		
+		
+		
+		#but {
+		margin: 0 auto;
+		align: left;
+		}
+		
+	
+		
+		#textplot{
+		text-align: center;
+		font-weight:bold;
+		position:relative;
+		top:-7px;
+		}
+		#midblock{
+		position:relative;
+		top:40px;
+		}
+		
+		#Content {
+		background-color: #e5e5e5;
+		height: 840px;
+		width:1255px;
+        border-style: solid;
+        border-width: 3px;
+		border-radius:5%;
+		position:absolute;
+		
+		left:50%;
+		transform: translate(-50%);
+		box-shadow: 10px 10px 5px grey;
+		
+		}
+		
+		#comp {
+		background-color: #e6f7ff;
+		position:relative;
+		top:7px;
+		left:97px;
+		width:580px;
+		height:130px;
+		border-style: solid;
+        border-width: 3px;
+		
+		}
+		
+		#fft {
+		background-color: #e6f7ff;
+		position:relative;
+		top:7px;
+		left:42px;
+		width:580px;
+		height:130px;
+		border-style: solid;
+        border-width: 3px;
+		
+		}
+		
+		
+		#waveform {
+		background-color: #87CEFA;
+		position:relative;
+		top:18px;
+		left:-2px;
+		width:1100px;
+		height:115px;
+		border-style: solid;
+        border-width: 3px;
+		border-radius:15%;
+		}
+		
+		#label{
+		text-align: center;
+		font-weight:bold;
+		position:relative;
+		top:65px;
+		}
+		
+		#labels{
+		text-align: center;
+		font-weight:bold;
+		position:relative;
+		top:-10px;
+		}
+		#firstplot {
+		height:170px;
+		width:400px;
+		border-width: 3px;
+		background-color:white;
+		position:relative;
+		left:50px;
+		top:80px;
+		border-style:solid;
+		}
+		#firstplot:hover {
+    transform: scale(1.2); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+		#secondplot 
+		{
+		position: relative;
+		left: 38px;
+		top:80px;
+		height:225px;
+		width:250px;
+		border-width: 3px;
+		border-style:solid;
+		background-color:#B0C4DE;
+		}
+		
+		#myDiv1{
+		position: relative;
+		left: -15px;
+		top:80px;
+   height : 310px ;
+   width : 310px;	
+border-width: 3px;
+		border-style:solid;
+background-color:white;		
+   }
+		#myDiv{
+		position: relative;
+		left: -15px;
+		top:50px;
+   height : 300px ;
+   width : 300px;		
+   }
+		
+		#image{
+		position: relative;
+		top:7px;
+		left:1px;
+		width:100%;
+		height:90%;
+		}
+		
+		
+		#paramtxt{
+	position:relative;
+	left:2px;
+	color:#800000;
+	}
+		
+		#diatxt{
+		position:relative;
+		left:5px;
+		color:#800000;
+		}
+		
+		
+		#paramtxt1{
+	position:relative;
+	left:50px;
+	color:#8B4513;
+	}
+	
+	 #statcrv{
+    position:relative;
+	left:-20px;
+	color:#8B4513;
+   }
+ 
+		
+		#diatxt1{
+		position:relative;
+		left:40px;
+		color:#8B4513;
+		}
+		
+		
+		#texts{
+		font-weight:bold;
+		font-size:14px;
+		position:relative;
+		top:20px;
+		left:12px;
+		}
+		p{
+		margin:0px;
+		}
+	
+	
+	#viz{
+	position:relative;
+	top:10px;
+	color:	#2E8B57;
+	}
+	#txtclr{
+	color:red;
+	font-weight:normal;
+	}
+	#background{
+	overflow-x:hidden;
+	
+	background-color: #ffffe6;
+	width:100%;
+	height:100%;
+	position:fixed;
+    padding:0;
+    margin:0;
+
+    top:0;
+    left:0;
+	}
+	
+	#blocks{
+	position:relative;
+	left:-10px;
+	top:0px;
+	}
+	#fullcontent{
+	position:relative;
+	top:-8px;
+	
+
+	#progress-bar {
+    position: absolute;
+    z-index: 10;
+    top: 50%;
+    margin-top: -10px;
+    left: 5%;
+    width: 90%;
+}
+
+	
+	</style>
+		
+		
+	</head>
+	<body >
+	
+	 <div id="background">
+	 
+	 
+	 <div id="Content">
+	 
+	  
+	    <div><h3>Dynamic Range Control - Limiter Mode</h3></div>
+		
+		<div class="dropdown modebtn">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Limiter
+  </button>
+  
+  
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" href="PEAK.html">Compressor Peak</a>
+	<a class="dropdown-item" href="RMS.html">Compressor RMS</a>
+	<a class="dropdown-item" href="EXPAND.html">Expander</a>
+	 <a class="dropdown-item" href="NSGT.html">Noise Gate</a>
+    
+  </div>
+</div>
+		<div id ="frm">
+		<form  method="POST"
+         enctype = "multipart/form-data">
+		 
+         <input type = "file" name = "file" id="input" style="font-size:20px ; color: blue;width:250px; " />
+		
+   
+		 </form>
+		</div>
+		
+		   <div id="scndDiv">
+		  
+	  
+		 <button class="btn btn-primary btn-lg" onclick="submit()">Plot Input Audio</button>
+		 <!--<button class="btn btn-success btn-lg" onclick="CompAndPlay()">Plot Compressed Audio</button>-->
+		<span class="btn btn-success btn-lg pop" data-original-title="This might take a few seconds! Please wait." data-content="Did you click on the 'Plot Original Audio' button first?" onclick="CompAndPlay()" >Plot Output Audio</span>
+		 </div>
+	      <div id="upload"> 
+		  <button id="b1" class="btn btn-warning btn-lg" data-action="play">
+                        <i class="glyphicon glyphicon-play"></i>
+                       Play Input Audio 
+     
+                    </button>
+					
+		 	<button id="b2" class="btn btn-info btn-lg" data-action="play1">
+                        <i class="glyphicon glyphicon-play"></i>
+                        Play Output Audio
+                   
+                    </button>  
+					
+        </div>
+	
+		
+		<div id="midblock">
+		
+		  <div id="labels">
+	        <div class="row">
+              <!--<div class="col-sm" id="diatxt">
+               Block Diagram 
+              </div>-->
+			  <div class="col-sm" id="diatxt">
+               Input Audio 
+              </div>
+			   <div class="col-sm" id="paramtxt">
+                Output Audio
+			  </div>
+              
+			</div>
+		  </div>
+		  
+		  
+		  <div id="blocks">
+	        <div class="row">
+              <div id="fft">
+                    <!-- Here be the waveform -->
+                </div>  
+			  <div id="comp">
+                    <!-- Here be the waveform -->
+                </div> 
+			     
+		    </div>
+		  </div>
+		  
+		 
+		</div>
+		
+	  
+	  <div id="label">
+	        <div class="row">
+              
+			  <div class="col" id="paramtxt1">
+                Block Diagram
+			  </div>
+			  <div class="col" id="diatxt1">
+               Parameters 
+              </div>
+              <div class="col" id="statcrv">
+                Static Curve
+			  </div>
+			</div>
+		  </div>
+	  
+	 
+	   <div id="blockz">
+	        <div class="row">
+              <div class="col-sm">
+                <div class="container" id="firstplot">
+				<img src="Limiter.png" id="image">
+				
+				</div>
+              </div>
+              <div class="col-sm">
+                <div class="container" id="secondplot">
+				<div id="texts">
+				<form action = "http://localhost:5000/results2" method = "POST" enctype = "multipart/form-data" role="form">
+       <!-- <p >Slope: <span style="color:red; font-size:9px;"></span>nbsp;&nbsp;*Range 1 to 1000<input id="ratios" type = "text" name = "Ratio" value = 1  autocomplete='off' onkeyup="setVal(); this.value = minmax1(this.value, 1, 1000)" onfocusout="Validation()"onkeypress="return isNumber(event)"  /></p> -->
+         <p >Threshold <span style="color:red; font-size:10px;">(in dB)</span>   <input id="thresh" type = "text" name = "Threshold" value = -60 autocomplete='off' onfocusout="setVal(); this.value = minmax(this.value, -100, 0); Validation()"  onkeypress="return isNum(event)" /></p>
+         <p >Attack <span style="color:red; font-size:10px;">(in sec)</span> <input id="attack" type = "text" name = "Attack" value = 0.5 autocomplete='off' onfocusout="Validation()" onkeypress="return isNumber(event)" /></p>
+         <p >Release <span style="color:red; font-size:10px;">(in sec)</span> <input id="rel" type ="text" name = "Release" value = 0.5 autocomplete='off' onfocusout="Validation()" onkeypress="return isNumber(event)" /></p>
+	
+       
+		
+		
+      </form>
+	  <button id="buttt" class="btn btn-danger" onclick="Plot2()">Submit</button>
+				
+				
+				</div>
+				</div>
+			  </div>
+			  <div class="col-sm">
+			  <div class="container" id="myDiv1"><div id="myDiv"style="margin-top: -50px;"></div></div>
+			  </div>
+			</div>
+		  </div>
+	  
+	  
+  
+		  </div>
+		
+	 </div>   		
+			
+
+		   
+		
+		<script type="text/javascript">
+		var r=0;
+		var s=0;
+		var data;
+		
+	$('.pop').popover().click(function () {
+    setTimeout(function () {
+        $('.pop').popover('hide');
+    }, 2000);
+});
+		
+		 var uploadField = document.getElementById("input");
+		 var allowedFiles = [".wav"];
+		 
+
+		 var CT; 
+		 //var CR;
+		 
+	uploadField.onchange = function() {
+			if(this.files[0].size > 1048576){
+				alert("File is too big! Allowed size limit is 1MB.");
+				this.value = ""; 
+				return false;
+			}
+			
+			var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:\(\)])+(" + allowedFiles.join('|') + ")$");
+        if (!regex.test(uploadField.value.toLowerCase())) {
+            alert("Invalid File type! Only .wav files are allowed.");
+			uploadField.value = "";
+            return false;
+        }
+return true;
+		};
+	
+		
+		function minmax(value, min, max) 
+{
+    if(parseFloat(value) < min) 
+    {   alert("Range is from 0 to -100");
+        return -100; }
+    else if(parseFloat(value) > max)
+    {   alert("Range is from 0 to -100");
+        return 0; }
+    else return value;
+}
+		
+		function minmax1(value, min, max) 
+{
+    if(parseFloat(value) < min)
+    {   alert("Range is from 1 to 1000");
+        return 1; }
+    else if(parseFloat(value) > max) 
+    {   alert("Range is from 1 to 1000");
+        return 1000; }
+    else return value;
+}
+
+	$.ajax({
+           url: 'http://localhost:5000/results2',
+            data: $('form').serialize(),
+            type: 'POST',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+	$('#b1').click(function() {
+if(r==0){
+alert('Please plot input audio first.');
+}
+});	
+$('#b2').click(function() {
+if(s==0){
+alert('Please plot output audio first.');
+}
+});	
+		
+		$(function() {
+    $('#buttt').click(function() {
+	console.log('am i here');
+	
+        $.ajax({
+            url: 'http://localhost:5000/results2',
+            data: $('form').serialize(),
+            type: 'POST',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+});
+		window.onload = document.getElementById("input").value = "";
+		
+		function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)&& charCode != 43 && charCode !=46 && charCode!=37 && charCode!=39) {
+        return false;
+    }
+    return true;
+}
+
+	function isNum(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)&& charCode != 43 && charCode !=46 && charCode !=45 && charCode > -100&& charCode!=37 && charCode!=39) {
+        return false;
+    }
+    return true;
+}
+		
+		function Validation()
+		{
+		var rat = document.getElementById("ratios").value;
+		var thres = document.getElementById("thresh").value;
+		var rele = document.getElementById("rel").value;
+		var att = document.getElementById("attack").value;
+		//if(rat=="")
+          //     {
+            //     alert("Ratio should not be empty ");
+              // }
+		if(thres=="")
+               {
+                 alert("Threshold should not be empty");
+               }	
+		if(rele=="")
+               {
+                 alert("Release should not be empty");
+               }	
+		if(att=="")
+               {
+                 alert("Attack should not be empty");
+               }		
+		}
+		
+		function setVal(){
+		
+		// CR = $("#ratios").val();
+		 CT = $("#thresh").val() ;
+		 if(CT<-100){CT=-100;}
+		 else if(CT>0) {CT=0;}
+		 //if(CR<2){CR=2;}
+		 //else if(CR>1000) {CR=1000;}
+		 Plot1();
+		 console.log("hello");
+		}
+		
+		function DefaultPlot(){
+		 //CR = $("#ratios").val();
+		 CT = $("#thresh").val() ;
+		 Plot();
+		}
+		function Plot1() {
+		console.log("in Plot");	
+		layout = {
+		
+	title: 'Input vs Output Level (dB)',
+	 
+  xaxis: {
+    title: 'Input Level in dB',
+	range:[-105,0],
+	autotick: false,
+    ticks: 'outside',
+    tick0: 0,
+    dtick: 20,
+    ticklen: 10,
+    tickwidth: 2,
+    tickcolor: '#000',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: '#7f7f7f'
+    }
+  },
+  yaxis: {
+    title: 'Output Level in dB',
+	range:[-105,0],
+	autotick: false,
+    ticks: 'outside',
+    tick0: 0,
+    dtick: 20,
+    ticklen: 10,
+    tickwidth: 2,
+    tickcolor: '#000',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: '#7f7f7f'
+    }
+  }
+ 
+};
+
+		trace1 = {
+			x: [-100,CT, 0], 
+			y: [-100,CT, CT],
+			name: 'Static Curve',
+			line: {color: 'rgb(255, 0, 0)'},
+			showlegend: false,
+			type: 'scatter'
+			};
+		trace2 = {
+			x: [CT,CT, 0], 
+			y: [CT,CT, 0], 
+			name: 'Default',
+			line: {color: 'rgb(0, 0, 0)'},
+			showlegend: false,
+			type: 'scatter'
+			};
+
+data = [trace1];
+
+}
+		function Plot2() {
+		Plotly.newPlot('myDiv', data,layout,{displayModeBar: false});
+		}
+		
+		
+		function Plot() {
+		console.log("in Plot");	
+		var layout = {
+		
+	title: 'Input vs Output Level (dB)',
+	 
+  xaxis: {
+    title: 'Input Level in dB',
+	range:[-105,0],
+	autotick: false,
+    ticks: 'outside',
+    tick0: 0,
+    dtick: 20,
+    ticklen: 10,
+    tickwidth: 2,
+    tickcolor: '#000',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: '#7f7f7f'
+    }
+  },
+  yaxis: {
+    title: 'Output Level in dB',
+	range:[-105,0],
+	autotick: false,
+    ticks: 'outside',
+    tick0: 0,
+    dtick: 20,
+    ticklen: 10,
+    tickwidth: 2,
+    tickcolor: '#000',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: '#7f7f7f'
+    }
+  }
+ 
+};
+		//var p = CT/CR
+			trace1 = {
+			x: [-100,CT, 0], 
+			y: [-100,CT, CT],
+			name: 'Static Curve',
+			line: {color: 'rgb(255, 0, 0)'},
+			showlegend: false,
+			type: 'scatter'
+			};
+		trace2 = {
+			x: [CT,CT, 0], 
+			y: [CT,CT, 0], 
+			name: 'Default',
+			line: {color: 'rgb(0, 0, 0)'},
+			showlegend: false,
+			type: 'scatter'
+			};
+
+var data = [trace1];
+Plotly.newPlot('myDiv', data,layout,{displayModeBar: false});
+}
+		
+		
+		
+		
+var wavesurfer;
+        var wavesurfer1;
+		
+		window.onload = function () {
+				wavesurfer = WaveSurfer.create({
+				container: document.querySelector('#fft'),
+				waveColor: 'red',
+                progressColor: 'maroon'
+       
+			});
+			
+			wavesurfer1 = WaveSurfer.create({
+				container: document.querySelector('#comp'),
+				waveColor: 'red',
+                progressColor: 'maroon'
+				
+			});
+
+			// Load audio from URL
+   // wavesurfer.load('ol2.wav');
+			
+
+    // Play/pause on button press
+    document.querySelector('[data-action="play"]').addEventListener(
+        'click', wavesurfer.playPause.bind(wavesurfer)
+    );
+
+	// wavesurfer1.load('ol2-compressed.wav');
+			
+
+    // Play/pause on button press
+    document.querySelector('[data-action="play1"]').addEventListener(
+        'click', wavesurfer1.playPause.bind(wavesurfer1)
+    );
+	DefaultPlot();
+
+};
+
+	function uploadAndGetOrignalFile(){
+		var compFile = document.getElementById("compLoad").files[0];
+		 	
+	}
+
+	function loadCompFile(){
+		//var compFile = document.getElementById("compLoad").files[0];
+		// console.log(compFile)
+		wavesurfer1.load('http://localhost:5000/getFile2');
+		wavesurfer1.on('ready', () => {
+			wavesurfer1.play();
+		})
+		
+		// wavesurfer1.load('compressed.wav');
+	}
+
+
+
+function submit(){
+	value = document.getElementById("input").files[0];
+	if (typeof value === 'undefined' || value === null) {
+				alert("Please browse an audio first.");
+			}
+	var data = new FormData();
+	data.append('file', value);
+	$.ajax({
+        url: 'http://localhost:5000/getSuccessOriginalFile2',
+        type: 'POST',
+        data: data,
+        cache: false,
+        dataType: 'json',
+        processData: false, // Don't process the files
+        contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+        success: function(data)
+        {
+			console.log(data);
+			r=r+1;
+			wavesurfer.load('http://localhost:5000/getOriginalFile2');
+        },
+        error: function(jqXHR, textStatus, errorThrown)
+        {
+          console.log('http://localhost:5000/getOriginalFile2')
+        }
+    });
+
+	
+}
+
+function CompAndPlay(){
+	if (r==0) {
+				alert("Please plot input audio first.");
+			}
+	else{
+	$.ajax({
+        url: 'http://localhost:5000/recFile2',
+        type: 'GET',
+        cache: false,
+        dataType: 'json',
+        processData: false, // Don't process the files
+        contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+        success: function(data)
+        {
+			console.log(data);
+			s=s+1;
+			wavesurfer1.load('http://localhost:5000/getFile2');
+			
+        },
+        error: function(jqXHR, textStatus, errorThrown)
+        {
+          console.log('Error in CompAndPlay')
+		  alert ('Please enter all the Parameters correctly!!');
+        }
+    });
+	
+	}
+}
+		</script>
+	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+	
+	</body>
+	
+</html>
