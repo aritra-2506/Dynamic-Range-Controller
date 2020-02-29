@@ -292,7 +292,123 @@ def  recFile1():
         write('compressed_peak.wav', Fs, scaled)
 
         return jsonify({"sucess": "true"})
-    
+    #----------------------------------------Limiter-----------------------------------------------------------------------
+
+
+@app.route("/getSuccessOriginalFile2", methods = ['GET', 'POST'])
+def getTheSuccessOOriginalFile2():
+    if request.method == 'POST':
+
+        ff = request.files['file']
+
+        ff.save(secure_filename('OriginalFile2.wav'))
+    return jsonify({"sucess": "true"})
+
+@app.route("/getOriginalFile2")
+def getTheOriginalFile2():
+    return send_file('OriginalFile2.wav')
+
+@app.route("/getFile2")
+def getTheFile2():
+    return send_file('compressed_lim.wav')
+
+#gc.collect()
+
+@app.route("/results2", methods = ['POST'])
+def results2():
+    if request.method == 'POST':
+        #ratio = request.form['Ratio']
+        threshold = request.values['Threshold']
+        attack = request.form['Attack']
+        release = request.form['Release']
+
+
+        fieldnames = ['threshold','attack','release']
+        with open('param2.csv', 'w') as inFile:
+            writer = csv.DictWriter(inFile, fieldnames=fieldnames)
+            writer.writerow({'threshold': threshold,'attack':attack,'release': release})
+
+
+        return '{} {} {}'.format(threshold, attack, release)
+
+
+@app.route("/recFile2", methods = ['GET', 'POST'])
+def  recFile2():
+
+    if request.method == 'GET':
+
+        #ff = request.files['file']
+
+        #ff.save(secure_filename(ff.filename))
+        with open("param2.csv") as f:
+            reader = csv.reader(f)
+            data = [r for r in reader]
+            threshold = float(data[0][0])
+            attack = float(data[0][1])
+            release = float(data[0][2])
+
+        samplerate, data = wavfile.read("OriginalFile2.wav")
+        print(samplerate)
+        w = wave.open('OriginalFile2.wav', 'rb')
+        num = w.getnchannels()
+
+        CT1 = threshold
+        newG = CT1 / 20
+        CT = np.power(10, newG)
+        # CT = 0.5
+        # print(CT)
+        # CR = 1
+        at = attack  # in second
+        rt = release  # in second
+        Fs = samplerate
+        xpeak = 0
+        g = 1;
+        output = np.array([], dtype=float)
+        # output = np.append(output, 0)
+        norm_data = np.array([], dtype=float)
+
+        print(Fs)
+
+        song = read("OriginalFile2.wav")
+        data = np.array(song[1], dtype=float)
+
+        if (num == 1):
+            for t in data:  # converting stereo to mono channel
+                avg_data = t / 32768
+                norm_data = np.append(norm_data, avg_data)
+        else:
+            for t in data:  # converting stereo to mono channel
+                avg_data = t[0] / 32768
+                norm_data = np.append(norm_data, avg_data)
+
+        for i, item in enumerate(norm_data):
+            a = np.abs(item)
+            # print(xd)
+
+            if (a > xpeak):
+                coeff = at
+            else:
+                coeff = rt
+            # print(a)
+            xpeak = ((xpeak * (1 - coeff)) + (coeff * a))
+            # print(xd)
+            f = min(1, CT / xpeak)
+            if (f < g):
+                coeff = at
+            else:
+                coeff = rt
+            g = ((1 - coeff) * g + (coeff * f))
+            if (i == 0):
+                val = 0
+            else:
+                val = (norm_data[i - 1] * g)
+            output = np.append(output, val)
+
+
+        scaled = np.int16(output * 32767)
+        write('compressed_lim.wav', Fs, scaled)
+
+        return jsonify({"sucess": "true"})
 if __name__ == "__main__":
     app.run(threaded=True)
 
