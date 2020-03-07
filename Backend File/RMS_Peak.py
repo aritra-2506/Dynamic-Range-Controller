@@ -409,10 +409,178 @@ def  recFile2():
         write('compressed_lim.wav', Fs, scaled)
 
         return jsonify({"sucess": "true"})
+    
+#------------------------------------------NoiseGate--------------------------------------------------------------------------
+
+@app.route("/getSuccessOriginalFile3", methods = ['GET', 'POST'])
+def getTheSuccessOriginalFile3():
+    if request.method == 'POST':
+
+        ff = request.files['file']
+
+        ff.save(secure_filename('OriginalFile3.wav'))
+    return jsonify({"sucess": "true"})
+
+@app.route("/getOriginalFile3")
+def getTheOriginalFile3():
+    return send_file('OriginalFile3.wav')
+
+@app.route("/getFile3")
+def getTheFile3():
+    return send_file('compressed_NSGT.wav')
+ 
+#gc.collect()
+
+@app.route("/results3", methods = ['POST'])
+def results3():
+    if request.method == 'POST':
+        ltr = request.values['LTRThreshold']
+        upr = request.values['UPRThreshold']
+        attack = request.form['Attack']
+        release = request.form['Release']
+        hld = request.form['HldTm']
+        pp = request.form['ppt']
+
+
+        fieldnames = ['ltr', 'upr','attack','release','hld','pp']
+        with open('param3.csv', 'w') as inFile:
+            writer = csv.DictWriter(inFile, fieldnames=fieldnames)
+            writer.writerow({'ltr': ltr, 'upr': upr,'attack':attack,'release': release,'hld':hld,'pp':pp})
+
+
+        return '{} {} {} {} {} {}'.format(ltr, upr, attack, release,hld,pp)
+
+
+@app.route("/recFile3", methods = ['GET', 'POST'])
+def  recFile3():
+
+    if request.method == 'GET':
+
+        #ff = request.files['file']
+
+        #ff.save(secure_filename(ff.filename))
+        with open("param3.csv") as f:
+            reader = csv.reader(f)
+            data = [r for r in reader]
+            ltr = float(data[0][0])
+            upr = float(data[0][1])
+            attack = float(data[0][2])
+            release = float(data[0][3])
+            hld = float(data[0][4])
+            pp = float(data[0][5])
+
+            samplerate, data = wavfile.read("OriginalFile3.wav")
+            #print(samplerate)
+            w = wave.open('OriginalFile3.wav', 'rb')
+            num = w.getnchannels()
+
+            lt1 = ltr
+            lt = np.power(10, (lt1 / 20))
+            at1 = attack
+            rt1 = release
+            a = pp
+            ht1 = hld
+            ut1 = upr
+            ut = np.power(10, (ut1 / 20))
+            Fs = samplerate
+
+            output1 = np.array([], dtype=float)
+            output = np.array([], dtype=float)
+            norm_data = np.array([], dtype=float)
+            g = np.array([], dtype=float)
+            h = np.array([], dtype=float)
+            x1 = np.array([], dtype=float)
+
+            song = read("OriginalFile3.wav")
+            data = np.array(song[1], dtype=float)
+
+            if (num == 1):
+                for t in data:  # converting stereo to mono channel
+                    avg_data = t / 32768
+                    norm_data = np.append(norm_data, avg_data)
+            else:
+                for t in data:  # converting stereo to mono channel
+                    avg_data = t[0] / 32768
+                    norm_data = np.append(norm_data, avg_data)
+
+            rel = round(rt1 * Fs)
+            att = round(at1 * Fs)
+            lthcnt = 0
+            uthcnt = 0
+            ht = round(ht1 * Fs)
+
+            s = np.absolute(norm_data[0])
+            x1 = np.append(x1, s)
+            c = (np.power((1 - a), 2) * s)
+            h = np.append(h, c)
+
+            s = np.absolute(norm_data[1]) + 2 * a * x1[0]
+            x1 = np.append(x1, s)
+            c = (np.power((1 - a), 2) * s)
+            h = np.append(h, c)
+
+            for i, item in enumerate(norm_data):
+                if (i >= 2):
+                    s = (np.absolute(norm_data[i]) + (2 * a * x1[i - 1]) - (np.power(a, 2)) * x1[i - 2])
+                    x1 = np.append(x1, s)
+                    c = np.power((1 - a), 2) * s
+                    h = np.append(h, c)
+
+            h = h / max(h)
+
+            for i, item in enumerate(h):
+                if (i == 0):
+                    lthcnt = lthcnt + 1
+                    uthcnt = uthcnt + 1
+                    q = 0
+                    g = np.append(g, q)
+                    # output1 = np.append(output1, g)
+                else:
+                    if (h[i] <= lt) | ((h[i] < ut) & (lthcnt > 0)):
+                        lthcnt = lthcnt + 1
+                        uthcnt = 0
+                        if (lthcnt > ht):
+                            if (lthcnt > (rel + ht)):
+                                q = 0
+                                g = np.append(g, q)
+                            else:
+                                q = 1 - (lthcnt - ht) / rel
+                                g = np.append(g, q)
+                        elif ((i < ht) & (lthcnt == i)):
+                            q = 0
+                            g = np.append(g, q)
+                        else:
+                            q = 1
+                            g = np.append(g, q)
+                    elif (h[i] >= ut) | ((h[i] > lt) & (uthcnt > 0)):
+                        uthcnt = uthcnt + 1
+
+                        if (g[i - 1] < 1):
+                            q = max(uthcnt / att, g[i - 1])
+                            g = np.append(g, q)
+                        else:
+                            q = 1
+                            g = np.append(g, q)
+                        lthcnt = 0
+                    else:
+                        q = g[i - 1]
+                        g = np.append(g, q)
+                        lthcnt = 0
+                        uthcnt = 0
+
+                y = norm_data[i] * g[i]
+                output1 = np.append(output1, y)
+            val = output1 * max(np.absolute(norm_data)) / max(np.absolute(output1))
+            output = np.append(output, val)
+
+            scaled = np.int16(output * 32767)
+            write('compressed_NSGT.wav', Fs, scaled)
+
+        return jsonify({"sucess": "true"})
+
+
 if __name__ == "__main__":
     app.run(threaded=True)
-
-
 
 
 
