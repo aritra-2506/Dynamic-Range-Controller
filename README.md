@@ -9,3 +9,5 @@ Dynamic Range of a signal can be controlled using an application named as Dynami
 4. Expander
 5. Noise Gate.
 
+The web implementation of drc looked like 'drc.png' uploaded here.
+
