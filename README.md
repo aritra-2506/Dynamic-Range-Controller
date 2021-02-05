@@ -11,3 +11,5 @@ Dynamic Range of a signal can be controlled using an application named as Dynami
 
 The web implementation of drc looked like 'drc.png' uploaded here.
 
+Is is used to compare how the audio quality and the signal time plot and it's dynamic range change with change in different parameters like Ratio, Threshold, Attack, Release, Hold etc.
+
