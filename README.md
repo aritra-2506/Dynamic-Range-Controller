@@ -12,5 +12,3 @@ Dynamic Range of a signal can be controlled using an application named as Dynami
 
 Is is used to compare how the audio quality and the signal time plot and it's dynamic range change with change in different parameters like Ratio, Threshold, Attack, Release, Hold etc. We can also see the corresponding change in Static Curve and Block Diagram.
 
-Project Documents folder contains the report, the final presentation and an analytical research on Machine Learning in Digital Audio Signal Processing.
-
